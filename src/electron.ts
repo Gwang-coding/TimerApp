@@ -6,9 +6,11 @@ let mainWindow: BrowserWindow | null = null;
 
 async function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 850,
+        minWidth: 850,
         height: 680,
+        width: 900,
         titleBarStyle: 'hiddenInset',
+        resizable: false,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
