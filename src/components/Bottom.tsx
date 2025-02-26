@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import TodoList from './TodoList';
 
@@ -8,11 +8,13 @@ interface BottomProps {
 }
 
 export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
+    const [selectedTask, setSelectedTask] = useState<string | null>(null);
     const [list, setList] = useState(false);
     const [time, setTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
-
+    const [handleTimeChange, setHandleTimeChange] = useState<number>(0);
+    const listRef = useRef<HTMLDivElement | null>(null);
     // 타이머 시작/정지
     const toggleTimer = () => {
         if (isRunning) {
@@ -39,18 +41,42 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
         setIsRunning(!isRunning);
     };
 
-    const handleTimeChange = (getTime: number) => {
-        setTime(getTime);
-    };
-
     // 컴포넌트가 언마운트 될 때 타이머를 정리합니다.
     useEffect(() => {
         return () => {
-            if (intervalId) {
+            if (isRunning && intervalId) {
                 clearInterval(intervalId);
             }
         };
-    }, [intervalId]);
+    }, [intervalId, isRunning]);
+    useEffect(() => {
+        onTaskSelect(selectedTask);
+        setTime(handleTimeChange);
+        onTime(handleTimeChange);
+        if (selectedTask == null) {
+            onTime(0);
+            setTime(0);
+        }
+        setIsRunning(false); // 타이머 강제 정지
+    }, [selectedTask]);
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (listRef.current && !listRef.current.contains(event.target as Node)) {
+                setList(false);
+            }
+        };
+
+        if (list) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [list]);
+
     return (
         <Div className="bottom">
             <CircleButton>
@@ -66,8 +92,8 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
                 </CircleButton>
             )}
             {list && (
-                <Div className="list">
-                    <TodoList sendTime={handleTimeChange} seconds={time} onTaskSelect={onTaskSelect} onClose={() => setList(false)} />
+                <Div className="list" ref={listRef}>
+                    <TodoList sendTime={setHandleTimeChange} seconds={time} onTaskSelect={setSelectedTask} onClose={() => setList(false)} />
                 </Div>
             )}
 
