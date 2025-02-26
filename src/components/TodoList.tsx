@@ -37,7 +37,7 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
     const handleTaskSelect = (index: number) => {
         const updatedTasks = [...tasks];
         const prevSelected = updatedTasks.findIndex((task) => task.selected);
-        updatedTasks[index].timer = seconds;
+
         sendTime(tasks[index].timer);
         if (prevSelected !== -1) {
             // 이전 선택된 것이 동일한 index라면 선택 해제
@@ -65,6 +65,9 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
             setShowInput(false); // 입력 후 입력창 닫기
         }
     };
+    useEffect(() => {
+        setTasks((prevTasks) => prevTasks.map((task) => (task.selected ? { ...task, timer: seconds } : task)));
+    }, [seconds]);
     useEffect(() => {
         inputRef.current?.focus();
     }, [addTask]);
@@ -104,7 +107,7 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
         <Container>
             <TitleBar>
                 <Text>오늘 할 일</Text>
-                <Img className="add" onClick={onClose} src="../assets/images/pagedown.svg" />
+                <Img className="close" onClick={onClose} src="../assets/images/pagedown.svg" />
             </TitleBar>
 
             <TaskList>
@@ -131,7 +134,6 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
                         </Task>
                     ))}
 
-                {/* 입력 필드: 할 일 추가 버튼을 눌렀을 때만 표시 */}
                 {showInput && (
                     <InputWrapper>
                         <Input
@@ -207,11 +209,12 @@ const Container = styled.div`
     flex: 1;
     border-radius: 10px;
 `;
-const TaskText = styled.p<{ checked: boolean }>`
-    margin: 0;
+const TaskText = styled.div<{ checked: boolean }>`
     font-size: 14px;
+    margin: 5px 5px 5px 0;
     width: 100%;
     text-align: left;
+    font-weight: 600;
     color: ${(props) => (props.checked ? '#9CA3AF' : 'black')};
     text-decoration: ${(props) => (props.checked ? 'line-through' : 'none')};
 `;
@@ -316,7 +319,7 @@ const Task = styled.div<{ checked: boolean; isSelected?: boolean }>`
     background-color: ${(props) => (props.checked ? '#EFF1F3' : '')};
     border: solid ${(props) => (props.isSelected ? '1.5px #3a82f7' : '1px #c8c8c8')};
     border-radius: 10px;
-    height: ${(props) => (props.isSelected ? '40px' : '28px')};
+    height: ${(props) => (props.isSelected ? '40px' : '')};
     margin: 10px 0;
 `;
 
@@ -327,7 +330,7 @@ const TitleBar = styled.div`
     justify-content: center;
 `;
 const Img = styled.img`
-    &.add {
+    &.close {
         position: absolute;
         right: 10px;
         top: 10%;
@@ -338,7 +341,7 @@ const Img = styled.img`
     cursor: pointer;
 `;
 const CheckContainer = styled.div<{ checked: boolean }>`
-    width: 20px;
+    width: 23px;
     height: 18px;
     border-radius: 50%;
     border: ${(props) => (props.checked ? '1px solid #94A3B8' : '1px solid #333333')};
