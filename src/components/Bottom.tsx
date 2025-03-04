@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import TodoList from './TodoList';
+import MusicList from './MusicList';
 
 interface BottomProps {
     onTime: (time: number) => void;
@@ -10,6 +11,7 @@ interface BottomProps {
 export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
     const [selectedTask, setSelectedTask] = useState<string | null>(null);
     const [list, setList] = useState(false);
+    const [music, setMusic] = useState(false);
     const [time, setTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
@@ -63,10 +65,11 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
         const handleClickOutside = (event: MouseEvent) => {
             if (listRef.current && !listRef.current.contains(event.target as Node)) {
                 setList(false);
+                setMusic(false);
             }
         };
 
-        if (list) {
+        if (list || music) {
             document.addEventListener('mousedown', handleClickOutside);
         } else {
             document.removeEventListener('mousedown', handleClickOutside);
@@ -75,13 +78,18 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [list]);
-
+    }, [list, music]);
     return (
         <Div className="bottom">
-            <CircleButton>
+            <CircleButton onClick={() => setMusic(!music)}>
                 <Img src="../assets/images/music.svg" />
             </CircleButton>
+            {music && (
+                <Div className="list" ref={listRef}>
+                    <MusicList onClose={() => setMusic(false)} />
+                </Div>
+            )}
+
             {isRunning ? (
                 <CircleButton onClick={toggleTimer} className="play">
                     <Img src="../assets/images/pause.svg" />
@@ -117,7 +125,7 @@ const Div = styled.div`
         height: 480px;
         margin-inline: auto;
         width: 580px;
-        box-shadow: -1px -1px 8px 2px #494949;
+        box-shadow: 0px -1px 8px -1px #494949;
 
         border-radius: 4% 4% 0 0;
         bottom: 0;
