@@ -106,7 +106,9 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
     return (
         <Container>
             <TitleBar>
-                <Text>오늘 할 일</Text>
+                <Div className="listtop">
+                    <Img className="listimg" src="../assets/images/list.svg" /> <Text>Todo List</Text>
+                </Div>
                 <Img className="close" onClick={onClose} src="../assets/images/pagedown.svg" />
             </TitleBar>
 
@@ -200,13 +202,15 @@ const Div = styled.div`
     color: black;
     margin-bottom: 2px;
     font-weight: 600;
+    &.listtop {
+        display: flex;
+        align-items: center;
+    }
 `;
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: center;
     padding: 15px;
-    flex: 1;
     border-radius: 10px;
 `;
 const TaskText = styled.div<{ checked: boolean }>`
@@ -325,15 +329,14 @@ const Task = styled.div<{ checked: boolean; isSelected?: boolean }>`
 
 const TitleBar = styled.div`
     display: flex;
-    width: 100%;
-    position: relative;
-    justify-content: center;
+    padding: 0 10px;
+    justify-content: space-between;
 `;
 const Img = styled.img`
-    &.close {
-        position: absolute;
-        right: 10px;
-        top: 10%;
+    &.listimg {
+        filter: brightness(0%);
+        margin-right: 5px;
+        height: 25px;
     }
     &.list {
         margin-left: 10px;
