@@ -5,14 +5,56 @@ import { categoryTracks, Track } from './TrackData';
 export default function MusicList({ onClose }: { onClose: () => void }) {
     const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
     const [volume, setVolume] = useState(0.5);
-    const [currentTrack, setCurrentTrack] = useState<number | null>(null);
+    const [currentTrack, setCurrentTrack] = useState<number | null>(() => {
+        // 로컬 스토리지에서 현재 트랙 정보 복원
+        const savedTrack = localStorage.getItem('currentTrack');
+        return savedTrack ? parseInt(savedTrack) : null;
+    });
     const [muted, setMuted] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
-
-    const [currentCategory, setCurrentCategory] = useState<string>('카페');
+    const [currentCategory, setCurrentCategory] = useState<string>(() => {
+        // 로컬 스토리지에서 현재 카테고리 복원
+        const savedCategory = localStorage.getItem('currentCategory');
+        return savedCategory || 'jazz';
+    });
+    const [isRepeating, setIsRepeating] = useState(false);
+    const categoryImages: Record<string, string> = {
+        jazz: '../assets/images/jazz.jpg',
+        lofi: '../assets/images/lofi.jpg',
+        nature: '../assets/images/rain.png',
+    };
 
     // 현재 카테고리의 트랙들
     const tracks = categoryTracks[currentCategory];
+
+    // 컴포넌트 마운트 시 이전 상태 복원
+    useEffect(() => {
+        // 이전에 재생 중이던 트랙 복원
+        if (currentTrack !== null) {
+            const trackIndex = tracks.findIndex((track) => track.id === currentTrack);
+            if (trackIndex !== -1) {
+                const audio = audioRefs.current[trackIndex];
+                if (audio) {
+                    audio.volume = muted ? 0 : volume;
+                    // 로컬 스토리지에서 저장된 재생 상태 확인
+                    const wasPlaying = localStorage.getItem('isPlaying') === 'true';
+                    if (wasPlaying) {
+                        audio.play().catch((error) => console.log('Autoplay prevented:', error));
+                        setIsPlaying(true);
+                    }
+                }
+            }
+        }
+    }, []);
+
+    // 상태 변경 시 로컬 스토리지에 저장
+    useEffect(() => {
+        if (currentTrack !== null) {
+            localStorage.setItem('currentTrack', currentTrack.toString());
+        }
+        localStorage.setItem('currentCategory', currentCategory);
+        localStorage.setItem('isPlaying', isPlaying.toString());
+    }, [currentTrack, currentCategory, isPlaying]);
 
     // 카테고리 변경 핸들러
     const handleCategoryChange = (category: string) => {
@@ -20,6 +62,7 @@ export default function MusicList({ onClose }: { onClose: () => void }) {
         // 카테고리 변경 시 현재 재생 중인 트랙 초기화
         setCurrentTrack(null);
         setIsPlaying(false);
+        setIsRepeating(false);
         // 모든 오디오 정지
         audioRefs.current.forEach((audio) => {
             if (audio) {
@@ -51,6 +94,10 @@ export default function MusicList({ onClose }: { onClose: () => void }) {
 
     const toggleMute = () => {
         setMuted(!muted);
+    };
+
+    const toggleRepeat = () => {
+        setIsRepeating(!isRepeating);
     };
 
     const togglePlay = (trackId: number) => {
@@ -131,7 +178,16 @@ export default function MusicList({ onClose }: { onClose: () => void }) {
         // 각 오디오 요소에 이벤트 리스너 추가
         const audioElements = audioRefs.current;
         const handleTrackEnd = () => {
-            playNext(true); // 자동 재생 플래그 true
+            if (isRepeating && currentTrack !== null) {
+                // 현재 트랙 반복
+                const currentAudio = audioRefs.current[tracks.findIndex((track) => track.id === currentTrack)];
+                if (currentAudio) {
+                    currentAudio.currentTime = 0;
+                    currentAudio.play();
+                }
+            } else {
+                playNext(true); // 자동 재생 플래그 true
+            }
         };
 
         audioElements.forEach((audio) => {
@@ -148,16 +204,16 @@ export default function MusicList({ onClose }: { onClose: () => void }) {
                 }
             });
         };
-    }, [tracks, currentTrack]);
+    }, [tracks, currentTrack, isRepeating]);
 
     return (
         <Div className="container">
             <Div className="titlebar">
                 <Div className="listtop">
-                    <Img className="listimg" src="../assets/images/music.svg" />
+                    <Img className="listimg" src="../assets/icons/music.svg" />
                     <Text className="listtop">Music List</Text>
                 </Div>
-                <Img className="close" onClick={onClose} src="../assets/images/pagedown.svg" />
+                <Img className="close" onClick={onClose} src="../assets/icons/pagedown.svg" />
             </Div>
             <Div className="musicwrapper">
                 <Div className="musiclist">
@@ -167,14 +223,14 @@ export default function MusicList({ onClose }: { onClose: () => void }) {
                             className={`musictrack ${currentCategory === category ? 'active' : ''}`}
                             onClick={() => handleCategoryChange(category)}
                         >
-                            <Img className="list" src="../assets/images/backimg.jpg" />
+                            <Img className="list" src={categoryImages[category]} alt={category} />
                             <Text className="musiclist">{category}</Text>
                         </Div>
                     ))}
                 </Div>
                 <Div className="musicbottom">
                     <Div className="listtitle">
-                        <Img className="img" src="../assets/images/backimg.jpg" />
+                        <Img className="img" src={categoryImages[currentCategory]} />
                         <Div className="listinfobox">
                             <Div className="title">
                                 <Text className="list title">{currentCategory}</Text>
@@ -187,34 +243,38 @@ export default function MusicList({ onClose }: { onClose: () => void }) {
                             <Div className="playlist">
                                 <Div className="musicimg" onClick={() => togglePlay(currentTrack!)}>
                                     {isPlaying ? (
-                                        <Img className="listpause" src="../assets/images/pause.svg" />
+                                        <Img className="listpause" src="../assets/icons/pause.svg" />
                                     ) : (
-                                        <Img className="listplay" src="../assets/images/play.svg" />
+                                        <Img className="listplay" src="../assets/icons/play.svg" />
                                     )}
                                 </Div>
                                 <Div className="musicimg" onClick={playPrevious}>
-                                    <Img className="jump" src="../assets/images/preplay.svg" />
+                                    <Img className="jump" src="../assets/icons/preplay.svg" />
                                 </Div>
                                 <Div className="musicimg" onClick={() => playNext()}>
-                                    <Img className="jump" src="../assets/images/nextplay.svg" />
+                                    <Img className="jump" src="../assets/icons/nextplay.svg" />
                                 </Div>
-
-                                <Div className="musicimg" onClick={() => playNext()}>
+                                {/* 반복재생 아이콘 추가 */}
+                                <Div className={`musicimg ${isRepeating ? 'active' : ''}`} onClick={toggleRepeat}>
                                     <Img
-                                        className="sound"
-                                        src={muted ? '../assets/images/mute.svg' : '../assets/images/sound.svg'}
-                                        onClick={toggleMute}
+                                        className="repeat"
+                                        src="../assets/icons/repeat.svg"
+                                        style={{
+                                            filter: isRepeating ? 'brightness(0) invert(1)' : 'none',
+                                        }}
                                     />
+                                </Div>
+                                <Div className="musicimg" onClick={toggleMute}>
+                                    <Img className="sound" src={muted ? '../assets/icons/mute.svg' : '../assets/icons/sound.svg'} />
                                 </Div>
 
                                 <Slider min={0} max={1} step={0.02} value={muted ? 0 : volume} onChange={handleVolumeChange} />
-
-                                {/* <section>
-                                    <p>final volume: {finalVolume.toFixed(3)}</p>
-                                </section> */}
                             </Div>
                         </Div>
-                    </Div>
+                    </Div>{' '}
+                    {/* <section>
+                                    <p>final volume: {finalVolume.toFixed(3)}</p>
+                                </section> */}
                     <Div className="listwrapper">
                         {tracks.map((track, index) => (
                             <Div
@@ -307,6 +367,7 @@ const Div = styled.div`
         display: flex;
         align-items: center;
         padding: 0 10px 0 12px;
+
         cursor: pointer;
         &.active {
             background-color: #384151;
@@ -365,7 +426,8 @@ const Text = styled.p`
         cursor: pointer;
         text-align: start;
         &.num {
-            margin-right: 20px;
+            margin-right: 10px;
+            width: 20px;
         }
         &.title {
             font-weight: 600;
