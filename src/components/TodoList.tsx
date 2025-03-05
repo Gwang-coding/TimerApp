@@ -107,9 +107,9 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
         <Container>
             <TitleBar>
                 <Div className="listtop">
-                    <Img className="listimg" src="../assets/images/list.svg" /> <Text>Todo List</Text>
+                    <Img className="listimg" src="../assets/icons/list.svg" /> <Text>Todo List</Text>
                 </Div>
-                <Img className="close" onClick={onClose} src="../assets/images/pagedown.svg" />
+                <Img className="close" onClick={onClose} src="../assets/icons/pagedown.svg" />
             </TitleBar>
 
             <TaskList>
@@ -132,7 +132,7 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
                             </TaskText>
 
                             <Div className="timer">{formatTime(task.timer)}</Div>
-                            <Img className="list" onClick={(e) => handleDeleteTask(index, e)} src="../assets/images/cancel.svg" />
+                            <Img className="list" onClick={(e) => handleDeleteTask(index, e)} src="../assets/icons/cancel.svg" />
                         </Task>
                     ))}
 
@@ -182,13 +182,13 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
                             <Img
                                 className="list"
                                 onClick={() => setTasks(tasks.filter((_, i) => i !== index))}
-                                src="../assets/images/cancel.svg"
+                                src="../assets/icons/cancel.svg"
                             />
                         </Task>
                     ))}
                 {!showInput && (
                     <AddTask onClick={() => setShowInput(true)}>
-                        <Img src="../assets/images/is.svg" />
+                        <Img src="../assets/icons/is.svg" />
                         <Text className="addtask">할 일 추가하기</Text>
                     </AddTask>
                 )}
@@ -375,5 +375,5 @@ const CheckIcon = styled.div`
     height: 10px;
     background-size: cover;
     background-position: center;
-    background-image: url('/assets/images/done.svg');
+    background-image: url('/assets/icons/done.svg');
 `;

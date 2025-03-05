@@ -12,18 +12,18 @@ export default function Sidebar({ setBackgroundImage }: { setBackgroundImage: (i
                         <Text>배경화면</Text>
                     </Div>
                     <Div className="menulist">
-                        <Img className="eval" src="../assets/images/eval.svg" />
+                        <Img className="eval" src="../assets/icons/eval.svg" />
                         <Text>앱 평가하기</Text>
                     </Div>
                     <Div className="menulist">
-                        <Img className="info" src="../assets/images/info.svg" />
+                        <Img className="info" src="../assets/icons/info.svg" />
                         <Text>정보</Text>
                     </Div>
                 </MotionMenu>
             ) : (
                 <Div className="afterclick">
                     <Div className="backbtn">
-                        <Img className="back" src="../assets/images/back.svg" onClick={() => setShowBackgroundSetting(false)} />
+                        <Img className="back" src="../assets/icons/back.svg" onClick={() => setShowBackgroundSetting(false)} />
                         <Text className="backbtn">배경화면 설정</Text>
                     </Div>
 

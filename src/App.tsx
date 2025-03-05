@@ -70,7 +70,7 @@ export default function App() {
                     onClick={() => {
                         setSidebar(!sidebar);
                     }}
-                    src="../assets/images/menu.svg"
+                    src="../assets/icons/menu.svg"
                 />
             </Div>
             {sidebar && (
@@ -81,7 +81,7 @@ export default function App() {
                             setSidebar(false);
                         }}
                         className="close"
-                        src="../assets/images/pagedown.svg"
+                        src="../assets/icons/pagedown.svg"
                     />
                 </Div>
             )}

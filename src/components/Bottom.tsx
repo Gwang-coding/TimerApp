@@ -17,6 +17,7 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
     const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
     const [handleTimeChange, setHandleTimeChange] = useState<number>(0);
     const listRef = useRef<HTMLDivElement | null>(null);
+
     // 타이머 시작/정지
     const toggleTimer = () => {
         if (isRunning) {
@@ -82,7 +83,7 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
     return (
         <Div className="bottom">
             <CircleButton onClick={() => setMusic(!music)}>
-                <Img src="../assets/images/music.svg" />
+                <Img src="../assets/icons/music.svg" />
             </CircleButton>
             {music && (
                 <Div className="list" ref={listRef}>
@@ -92,11 +93,11 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
 
             {isRunning ? (
                 <CircleButton onClick={toggleTimer} className="play">
-                    <Img src="../assets/images/pause.svg" />
+                    <Img src="../assets/icons/pause.svg" />
                 </CircleButton>
             ) : (
                 <CircleButton onClick={toggleTimer} className="play">
-                    <Img src="../assets/images/play.svg" />
+                    <Img src="../assets/icons/play.svg" />
                 </CircleButton>
             )}
             {list && (
@@ -106,7 +107,7 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
             )}
 
             <CircleButton onClick={() => setList(!list)}>
-                <Img src="../assets/images/list.svg" />
+                <Img src="../assets/icons/list.svg" />
             </CircleButton>
         </Div>
     );
