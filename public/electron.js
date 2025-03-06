@@ -133,7 +133,7 @@ function createWindow() {
         return __generator(this, function (_a) {
             mainWindow = new BrowserWindow({
                 minWidth: 850,
-                height: 680,
+                height: 600,
                 width: 900,
                 titleBarStyle: 'hiddenInset',
                 webPreferences: {
