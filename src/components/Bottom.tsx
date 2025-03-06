@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import TodoList from './TodoList';
 import MusicList from './MusicList';
-
+import { MusicPlayerProvider } from './MusicPlayer';
 interface BottomProps {
     onTime: (time: number) => void;
     onTaskSelect: (task: string | null) => void; // onTaskSelect의 타입을 명시합니다
@@ -40,7 +40,6 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
 
             setIntervalId(id);
         }
-        console.log(intervalId);
         setIsRunning(!isRunning);
     };
 
