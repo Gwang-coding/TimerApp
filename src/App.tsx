@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Bottom from './components/Bottom';
 import { format } from 'date-fns';
-
+import { MusicPlayerProvider } from './components/MusicPlayer';
 import quotesData from './components/quote.json';
 import Sidebar from './components/Sidebar';
 
@@ -63,15 +63,20 @@ export default function App() {
 
     return (
         <Page bgImage={backgroundImage}>
-            <Div className="top">
-                <Header>{currentTime}</Header>
+            <Div className="topwrapper">
+                <Div className="top">
+                    <Header>{currentTime}</Header>
+                </Div>
+
                 <Div className="stats">{selectedTask ? selectedTask : '오늘 할일에서 작업을 선택하세요.'}</Div>
-                <Img
-                    onClick={() => {
-                        setSidebar(!sidebar);
-                    }}
-                    src="../assets/icons/menu.svg"
-                />
+                <Div className="top">
+                    <Img
+                        onClick={() => {
+                            setSidebar(!sidebar);
+                        }}
+                        src="../assets/icons/menu.svg"
+                    />
+                </Div>
             </Div>
             {sidebar && (
                 <Div className="menuwrapper" ref={sidebarRef}>
@@ -90,7 +95,9 @@ export default function App() {
                 <Timer>{formatTime(time)}</Timer>
                 <Quote>"{quotesData.quotes[quoteIndex]}"</Quote>
             </Div>
-            <Bottom onTaskSelect={setSelectedTask} onTime={handleTimeChange} />
+            <MusicPlayerProvider>
+                <Bottom onTaskSelect={setSelectedTask} onTime={handleTimeChange} />
+            </MusicPlayerProvider>
         </Page>
     );
 }
@@ -98,7 +105,6 @@ export default function App() {
 const Page = styled.div<{ bgImage: string }>`
     display: flex;
     flex-direction: column;
-
     align-items: center;
     justify-content: space-between;
     height: 100vh;
@@ -140,14 +146,16 @@ const Div = styled.div`
         margin-bottom: 10px;
     }
 
-    &.top {
+    &.topwrapper {
         display: flex;
         justify-content: space-between;
         align-items: center;
         width: 85%;
         height: 80px;
-
         padding-top: 20px;
+    }
+    &.top {
+        width: 60px;
     }
     &.middle {
         display: flex;
