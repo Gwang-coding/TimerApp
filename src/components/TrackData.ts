@@ -2,6 +2,7 @@ export interface Track {
     id: number;
     title: string;
     src: string;
+    duration?: string;
 }
 
 export const categoryTracks: Record<string, Track[]> = {
