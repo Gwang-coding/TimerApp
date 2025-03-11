@@ -8,6 +8,8 @@ export const useMusicPlayer = () => useContext(MusicPlayerContext);
 
 export function MusicPlayerProvider({ children }: { children: React.ReactNode }) {
     const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
+    const [tracksWithDuration, setTracksWithDuration] = useState<Track[]>([]);
+
     const [volume, setVolume] = useState(0.5);
     const [muted, setMuted] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -22,6 +24,43 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     });
 
     const tracks = categoryTracks[currentCategory];
+    useEffect(() => {
+        const loadTrackDurations = async () => {
+            const tracksWithDurationData = await Promise.all(
+                tracks.map(async (track) => {
+                    try {
+                        const duration = await getAudioDuration(track.src);
+                        return { ...track, duration };
+                    } catch (error) {
+                        console.error(`Error loading duration for ${track.title}:`, error);
+                        return { ...track, duration: '00:00' };
+                    }
+                })
+            );
+            setTracksWithDuration(tracksWithDurationData);
+        };
+
+        loadTrackDurations();
+    }, [currentCategory]);
+    const getAudioDuration = (src: string): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const audio = new Audio();
+            audio.addEventListener('loadedmetadata', () => {
+                // 초 단위의 길이를 분:초 형식으로 변환
+                const minutes = Math.floor(audio.duration / 60);
+                const seconds = Math.floor(audio.duration % 60);
+                const formattedDuration = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                resolve(formattedDuration);
+            });
+
+            audio.addEventListener('error', (error) => {
+                reject(error);
+            });
+
+            audio.src = src;
+        });
+    };
+
     useEffect(() => {
         // 각 오디오 요소에 이벤트 리스너 추가
         const audioElements = audioRefs.current;
@@ -210,6 +249,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
                 playNext,
                 playPrevious,
                 handleCategoryChange,
+                tracksWithDuration,
             }}
         >
             {children}
