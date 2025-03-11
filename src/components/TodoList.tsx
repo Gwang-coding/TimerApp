@@ -117,7 +117,7 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
                 {tasks
                     .filter((task) => !task.checked)
                     .map((task, index) => (
-                        <Task checked={task.checked} key={index} isSelected={task.selected} onClick={() => handleTaskSelect(index)}>
+                        <Task checked={task.checked} key={index} $isSelected={task.selected} onClick={() => handleTaskSelect(index)}>
                             <CheckContainer
                                 checked={task.checked}
                                 onMouseUp={() => {
@@ -210,7 +210,7 @@ const Div = styled.div`
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    padding: 15px;
+    padding: 15px 5px;
     border-radius: 10px;
 `;
 const TaskText = styled.div<{ checked: boolean }>`
@@ -226,6 +226,7 @@ const Text = styled.p`
     font-size: 18px;
     color: black;
     margin: 0;
+    cursor: defalt;
     font-weight: bold;
     &.addtask {
         margin-left: 10px;
@@ -243,7 +244,7 @@ const AddTask = styled.div`
     border: 2px dashed #c8c8c8;
     padding-left: 10px;
     cursor: pointer;
-    margin-top: 10px;
+    margin: 10px 12px 0px 12px;
 `;
 const InputBtn = styled.button`
     cursor: pointer;
@@ -284,7 +285,7 @@ const InputWrapper = styled.div`
     flex-direction: column;
     border: 1px solid black;
     border-radius: 10px;
-    margin-top: 10px;
+    margin: 10px 12px 0px 12px;
 `;
 
 const Input = styled.input`
@@ -314,22 +315,22 @@ const TaskList = styled.div`
     max-height: 410px;
 `;
 
-const Task = styled.div<{ checked: boolean; isSelected?: boolean }>`
+const Task = styled.div<{ checked: boolean; $isSelected?: boolean }>`
     display: flex;
     justify-content: space-between;
     padding: 10px;
     cursor: pointer;
     align-items: center;
     background-color: ${(props) => (props.checked ? '#EFF1F3' : '')};
-    border: solid ${(props) => (props.isSelected ? '1.5px #3a82f7' : '1px #c8c8c8')};
+    border: solid ${(props) => (props.$isSelected ? '1.5px #3a82f7' : '1px #c8c8c8')};
     border-radius: 10px;
-    height: ${(props) => (props.isSelected ? '40px' : '')};
-    margin: 10px 0;
+    height: ${(props) => (props.$isSelected ? '40px' : '')};
+    margin: 10px 12px;
 `;
 
 const TitleBar = styled.div`
     display: flex;
-    padding: 0 10px;
+    padding: 0 15px;
     justify-content: space-between;
 `;
 const Img = styled.img`

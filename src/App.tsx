@@ -15,7 +15,7 @@ export default function App() {
     const [currentTime, setCurrentTime] = useState(format(new Date(), 'HH:mm'));
     const [quoteIndex, setQuoteIndex] = useState(0);
     const [sidebar, setSidebar] = useState<boolean>(false);
-    const [backgroundImage, setBackgroundImage] = useState('../assets/images/backimg1.jpg');
+    const [backgroundImage, setBackgroundImage] = useState('../assets/images/img1.jpg');
     const sidebarRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -62,7 +62,7 @@ export default function App() {
     }, [sidebar]);
 
     return (
-        <Page bgImage={backgroundImage}>
+        <Page $bgImage={backgroundImage}>
             <Div className="topwrapper">
                 <Div className="top">
                     <Header>{currentTime}</Header>
@@ -102,14 +102,14 @@ export default function App() {
     );
 }
 
-const Page = styled.div<{ bgImage: string }>`
+const Page = styled.div<{ $bgImage: string }>`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
     height: 100vh;
     color: white;
-    background-image: ${(props) => `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('${props.bgImage}')`};
+    background-image: ${(props) => `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('${props.$bgImage}')`};
     text-align: center;
     background-size: cover;
 `;
