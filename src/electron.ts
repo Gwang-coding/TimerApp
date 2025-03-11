@@ -15,6 +15,7 @@ async function createWindow() {
             nodeIntegration: true,
             contextIsolation: true,
             devTools: !!isDev,
+            sandbox: true, // 샌드박스 모드 활성화
         },
     });
 
