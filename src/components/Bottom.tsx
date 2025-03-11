@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import TodoList from './TodoList';
 import MusicList from './MusicList';
-import { MusicPlayerProvider } from './MusicPlayer';
+
 interface BottomProps {
     onTime: (time: number) => void;
     onTaskSelect: (task: string | null) => void; // onTaskSelect의 타입을 명시합니다
@@ -19,6 +19,9 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
     const listRef = useRef<HTMLDivElement | null>(null);
 
     // 타이머 시작/정지
+    useEffect(() => {
+        onTime(time); // `time` 상태가 변할 때만 `onTime` 호출
+    }, [time]);
     const toggleTimer = () => {
         if (isRunning) {
             // 타이머가 실행 중이면 중지
@@ -27,17 +30,9 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
                 setIntervalId(null);
             }
         } else {
-            // 타이머가 정지 중이면 시작
-            const id = setInterval(
-                () =>
-                    setTime((prev) => {
-                        const newTime = prev + 1;
-                        onTime(newTime); // 부모에게 seconds 값 전달
-                        return newTime;
-                    }),
-                1000
-            );
-
+            const id = setInterval(() => {
+                setTime((prev) => prev + 1); // 🔥 상태만 업데이트 (onTime 제거)
+            }, 1000);
             setIntervalId(id);
         }
         setIsRunning(!isRunning);
@@ -53,12 +48,14 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
     }, [intervalId, isRunning]);
     useEffect(() => {
         onTaskSelect(selectedTask);
-        setTime(handleTimeChange);
-        onTime(handleTimeChange);
         if (selectedTask == null) {
-            onTime(0);
             setTime(0);
+            onTime(0);
+        } else {
+            setTime(handleTimeChange);
+            onTime(handleTimeChange);
         }
+
         setIsRunning(false); // 타이머 강제 정지
     }, [selectedTask]);
     useEffect(() => {
