@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- 둥근 모서리의 흰색 사각형 배경 -->
+  <rect x="102.4" y="102.4" width="819.2" height="819.2" rx="204.8" ry="204.8" fill="white" stroke-width="5.12"/>
+  
+  <!-- 스톱워치 테두리 원 - 정중앙에 배치 -->
+  <circle cx="512" cy="537.6" r="281.6" fill="none" stroke="#428fff" stroke-width="51.2"/>
+  
+  <!-- 스톱워치 상단 버튼 - 원과의 간격 절반으로 줄임 -->
+  <rect x="435.2" y="153.6" width="153.6" height="51.2" rx="15.36" ry="15.36" fill="#428fff"/>
+  
+  <!-- 체크 마크 (원 위를 가로지르는) - 원의 새 위치에 맞게 조정 -->
+  <path d="M358.4 537.6 L460.8 640 L665.6 435.2" fill="none" stroke="#428fff" stroke-width="51.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
