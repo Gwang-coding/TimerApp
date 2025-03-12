@@ -15,7 +15,7 @@ export default function App() {
     const [currentTime, setCurrentTime] = useState(format(new Date(), 'HH:mm'));
     const [quoteIndex, setQuoteIndex] = useState(0);
     const [sidebar, setSidebar] = useState<boolean>(false);
-    const [backgroundImage, setBackgroundImage] = useState('../assets/images/img1.jpg');
+    const [backgroundImage, setBackgroundImage] = useState('./assets/images/img1.jpg');
     const sidebarRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -74,7 +74,7 @@ export default function App() {
                         onClick={() => {
                             setSidebar(!sidebar);
                         }}
-                        src="../assets/icons/menu.svg"
+                        src="./assets/icons/menu.svg"
                     />
                 </Div>
             </Div>
@@ -86,7 +86,7 @@ export default function App() {
                             setSidebar(false);
                         }}
                         className="close"
-                        src="../assets/icons/pagedown.svg"
+                        src="./assets/icons/pagedown.svg"
                     />
                 </Div>
             )}
@@ -189,17 +189,17 @@ const Img = styled.img`
     }
 `;
 
-const Header = styled.div`
+const Header = styled.p`
     font-size: 20px;
     font-weight: bold;
-    // text-shadow: 0.3px 0px #000, 0px 0.3px #000, -0.3px 0px #000, 0px -0.3px #000;
+    marign: 0;
 `;
 
-const Timer = styled.div`
+const Timer = styled.p`
     font-size: 120px;
     font-weight: bold;
     width: 200px;
-    margin-right: 145px;
+    margin: 0 145px 0 0;
 `;
 
 const Quote = styled.p`

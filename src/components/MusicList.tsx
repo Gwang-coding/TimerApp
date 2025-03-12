@@ -23,9 +23,9 @@ export default function MusicList({ onClose }: { onClose: () => void }) {
     } = useMusicPlayer();
 
     const categoryImages: Record<string, string> = {
-        jazz: '../assets/images/jazz.jpg',
-        lofi: '../assets/images/lofi.jpg',
-        nature: '../assets/images/rain.png',
+        jazz: './assets/images/jazz.jpg',
+        lofi: './assets/images/lofi.jpg',
+        nature: './assets/images/rain.png',
     };
 
     const tracks = tracksWithDuration.length > 0 ? tracksWithDuration : categoryTracks[currentCategory];
@@ -34,10 +34,10 @@ export default function MusicList({ onClose }: { onClose: () => void }) {
         <Div className="container">
             <Div className="titlebar">
                 <Div className="listtop">
-                    <Img className="listimg" src="../assets/icons/music.svg" />
+                    <Img className="listimg" src="./assets/icons/music.svg" />
                     <Text className="listtop">Music List</Text>
                 </Div>
-                <Img className="close" onClick={onClose} src="../assets/icons/pagedown.svg" />
+                <Img className="close" onClick={onClose} src="./assets/icons/pagedown.svg" />
             </Div>
             <Div className="musicwrapper">
                 <Div className="musiclist">
@@ -67,27 +67,27 @@ export default function MusicList({ onClose }: { onClose: () => void }) {
                             <Div className="playlist">
                                 <Div className="musicimg" onClick={() => togglePlay(currentTrack!)}>
                                     {isPlaying ? (
-                                        <Img className="listpause" src="../assets/icons/pause.svg" />
+                                        <Img className="listpause" src="./assets/icons/pause.svg" />
                                     ) : (
-                                        <Img className="listplay" src="../assets/icons/play.svg" />
+                                        <Img className="listplay" src="./assets/icons/play.svg" />
                                     )}
                                 </Div>
                                 <Div className="musicimg" onClick={playPrevious}>
-                                    <Img className="jump" src="../assets/icons/preplay.svg" />
+                                    <Img className="jump" src="./assets/icons/preplay.svg" />
                                 </Div>
                                 <Div className="musicimg" onClick={() => playNext()}>
-                                    <Img className="jump" src="../assets/icons/nextplay.svg" />
+                                    <Img className="jump" src="./assets/icons/nextplay.svg" />
                                 </Div>
                                 {/* 반복재생 아이콘 추가 */}
                                 <Div className={`musicimg ${isRepeating ? 'active' : ''}`} onClick={toggleRepeat}>
                                     {isRepeating ? (
-                                        <Img className="repeat" src="../assets/icons/notrepeat.svg" />
+                                        <Img className="repeat" src="./assets/icons/notrepeat.svg" />
                                     ) : (
-                                        <Img className="repeat" src="../assets/icons/repeat.svg" />
+                                        <Img className="repeat" src="./assets/icons/repeat.svg" />
                                     )}
                                 </Div>
                                 <Div className="musicimg" onClick={toggleMute}>
-                                    <Img className="sound" src={muted ? '../assets/icons/mute.svg' : '../assets/icons/sound.svg'} />
+                                    <Img className="sound" src={muted ? './assets/icons/mute.svg' : './assets/icons/sound.svg'} />
                                 </Div>
 
                                 <Slider min={0} max={1} step={0.02} value={muted ? 0 : volume} onChange={handleVolumeChange} />

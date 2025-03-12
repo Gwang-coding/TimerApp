@@ -79,7 +79,7 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
     return (
         <Div className="bottom">
             <CircleButton onClick={() => setMusic(!music)}>
-                <Img src="../assets/icons/music.svg" />
+                <Img src="./assets/icons/music.svg" />
             </CircleButton>
             {music && (
                 <Div className="list" ref={listRef}>
@@ -89,11 +89,11 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
 
             {isRunning ? (
                 <CircleButton onClick={toggleTimer} className="play">
-                    <Img src="../assets/icons/pause.svg" />
+                    <Img src="./assets/icons/pause.svg" />
                 </CircleButton>
             ) : (
                 <CircleButton onClick={toggleTimer} className="play">
-                    <Img src="../assets/icons/play.svg" />
+                    <Img src="./assets/icons/play.svg" />
                 </CircleButton>
             )}
             {list && (
@@ -103,7 +103,7 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
             )}
 
             <CircleButton onClick={() => setList(!list)}>
-                <Img src="../assets/icons/list.svg" />
+                <Img src="./assets/icons/list.svg" />
             </CircleButton>
         </Div>
     );

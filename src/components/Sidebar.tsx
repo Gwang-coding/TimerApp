@@ -3,27 +3,28 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 export default function Sidebar({ setBackgroundImage }: { setBackgroundImage: (img: string) => void }) {
     const [showBackgroundSetting, setShowBackgroundSetting] = useState(false);
+    const backgroundImages = Array.from({ length: 11 }, (_, i) => `img${i + 1}.jpg`);
     return (
         <AnimatePresence mode="wait">
             {!showBackgroundSetting ? (
                 <MotionMenu key="menu" initial={{ x: 0 }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ duration: 0.1 }}>
                     <Div className="menulist" onClick={() => setShowBackgroundSetting(true)}>
-                        <Img className="background" src="../assets/icons/background.svg" />
+                        <Img className="background" src="./assets/icons/background.svg" />
                         <Text>배경화면</Text>
                     </Div>
                     <Div className="menulist">
-                        <Img className="eval" src="../assets/icons/eval.svg" />
+                        <Img className="eval" src="./assets/icons/eval.svg" />
                         <Text>앱 평가하기</Text>
                     </Div>
                     <Div className="menulist">
-                        <Img className="info" src="../assets/icons/info.svg" />
+                        <Img className="info" src="./assets/icons/info.svg" />
                         <Text>정보</Text>
                     </Div>
                 </MotionMenu>
             ) : (
                 <Div className="afterclick">
                     <Div className="backbtn">
-                        <Img className="back" src="../assets/icons/back.svg" onClick={() => setShowBackgroundSetting(false)} />
+                        <Img className="back" src="./assets/icons/back.svg" onClick={() => setShowBackgroundSetting(false)} />
                         <Text className="backbtn">배경화면 설정</Text>
                     </Div>
 
@@ -37,17 +38,13 @@ export default function Sidebar({ setBackgroundImage }: { setBackgroundImage: (i
                         <Div>
                             <Text className="imgtext">Images</Text>
                             <Div className="backimg">
-                                <Btn $bgimg="img1.jpg" onClick={() => setBackgroundImage('../assets/images/img1.jpg')} />
-                                <Btn $bgimg="img2.jpg" onClick={() => setBackgroundImage('../assets/images/img2.jpg')} />
-                                <Btn $bgimg="img3.jpg" onClick={() => setBackgroundImage('../assets/images/img3.jpg')} />
-                                <Btn $bgimg="img4.jpg" onClick={() => setBackgroundImage('../assets/images/img4.jpg')} />
-                                <Btn $bgimg="img5.jpg" onClick={() => setBackgroundImage('../assets/images/img5.jpg')} />
-                                <Btn $bgimg="img6.jpg" onClick={() => setBackgroundImage('../assets/images/img6.jpg')} />
-                                <Btn $bgimg="img7.jpg" onClick={() => setBackgroundImage('../assets/images/img7.jpg')} />
-                                <Btn $bgimg="img8.jpg" onClick={() => setBackgroundImage('../assets/images/img8.jpg')} />
-                                <Btn $bgimg="img9.jpg" onClick={() => setBackgroundImage('../assets/images/img9.jpg')} />
-                                <Btn $bgimg="img10.jpg" onClick={() => setBackgroundImage('../assets/images/img10.jpg')} />
-                                <Btn $bgimg="img11.jpg" onClick={() => setBackgroundImage('../assets/images/img11.jpg')} />
+                                {backgroundImages.map((imgName) => (
+                                    <Btn
+                                        key={imgName}
+                                        onClick={() => setBackgroundImage(`./assets/images/${imgName}`)}
+                                        style={{ backgroundImage: `url(./assets/images/${imgName})` }}
+                                    />
+                                ))}
                             </Div>
                         </Div>
                     </MotionBackgroundSetting>
@@ -122,7 +119,8 @@ const Text = styled.p`
         margin-left: 10px;
     }
 `;
-const Btn = styled.button<{ $bgimg: string }>`
+
+const Btn = styled.button`
     cursor: pointer;
     width: 54px;
     height: 54px;
@@ -130,7 +128,6 @@ const Btn = styled.button<{ $bgimg: string }>`
     min-width: 50px;
     border: none;
     background: none;
-    background-image: ${({ $bgimg }) => `url(../assets/images/${$bgimg})`};
     background-size: cover;
 `;
 const MotionBackgroundSetting = styled(motion.div)`
