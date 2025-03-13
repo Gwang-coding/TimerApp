@@ -26,3 +26,5 @@ dist/*.zip
 dist/*.dmg
 dist/
 electron-build/checktimeProfile.provisionprofile
+electron-build/entitlements.mas.inherit.plist
+electron-build/entitlements.mas.plist
