@@ -24,7 +24,12 @@ async function createWindow() {
     });
 
     // 확인된 경로로 바로 설정
-    const htmlPath = path.join(__dirname, './build/index.html');
+    // path.join(__dirname, '../build/index.html'),
+    // path.join(__dirname, './build/index.html'),
+    // path.join(__dirname, 'build/index.html'),
+    // path.join(app.getAppPath(), 'build/index.html'),
+    // path.join(process.resourcesPath, 'build/index.html'),
+    const htmlPath = path.join(app.getAppPath(), 'build/index.html');
     const startURL = isDev ? 'http://localhost:3000' : `file://${htmlPath}`;
 
     try {
