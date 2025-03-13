@@ -54,7 +54,7 @@
         ]
     },
     "build": {
-        "appId": "9VPCBG66Y7",
+        "appId": "com.jaegwang.checktime",
         "productName": "CheckTime",
         "directories": {
             "output": "dist",
@@ -78,9 +78,19 @@
         "asar": true,
         "compression": "maximum",
         "mac": {
-            "target": "dmg",
+            "target": [
+                "dmg",
+                "pkg",
+                "mas"
+            ],
             "hardenedRuntime": true,
-            "icon": "assets/icons/appicon.png"
+            "icon": "electron-build/appicon.icns"
+        },
+        "mas": {
+            "entitlements": "electron-build/entitlements.mas.plist",
+            "entitlementsInherit": "electron-build/entitlements.mas.inherit.plist",
+            "provisioningProfile": "electron-build/checktimeProfile.provisionprofile",
+            "type": "distribution"
         }
     }
 }
