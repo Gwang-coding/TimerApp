@@ -25,3 +25,4 @@ dist/mac-arm64/
 dist/*.zip
 dist/*.dmg
 dist/
+electron-build/checktimeProfile.provisionprofile
