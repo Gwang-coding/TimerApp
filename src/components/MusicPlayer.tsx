@@ -189,7 +189,20 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
             togglePlay(prevTrackId);
         }
     };
-    const playNext = (autoPlay: boolean = false) => {
+    const pauseAllAudio = () => {
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                audioRefs.current.forEach((a) => {
+                    if (a) {
+                        a.pause();
+                        a.currentTime = 0;
+                    }
+                });
+                resolve();
+            }, 100); // 50ms에서 100ms로 지연 시간 증가
+        });
+    };
+    const playNext = async (autoPlay: boolean = false) => {
         // 현재 트랙의 인덱스 찾기
         const currentIndex = currentTrack ? tracks.findIndex((track) => track.id === currentTrack) : -1;
 
@@ -208,7 +221,8 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
             const nextAudio = audioRefs.current[nextIndex];
             if (nextAudio) {
                 // 모든 오디오 일시정지
-                audioRefs.current.forEach((a) => a?.pause());
+                await pauseAllAudio();
+                await new Promise((resolve) => setTimeout(resolve, 100));
 
                 // 볼륨 설정
                 nextAudio.volume = muted ? 0 : volume;
