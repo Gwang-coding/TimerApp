@@ -7,9 +7,9 @@ const MusicPlayerContext = createContext<any>(null);
 export const useMusicPlayer = () => useContext(MusicPlayerContext);
 
 export function MusicPlayerProvider({ children }: { children: React.ReactNode }) {
+    const workerRef = useRef<Worker | null>(null);
     const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
     const [tracksWithDuration, setTracksWithDuration] = useState<Track[]>([]);
-
     const [volume, setVolume] = useState(0.5);
     const [muted, setMuted] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -22,8 +22,8 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
         const savedCategory = localStorage.getItem('currentCategory');
         return savedCategory || 'jazz';
     });
-
     const tracks = categoryTracks[currentCategory];
+
     useEffect(() => {
         const loadTrackDurations = async () => {
             const tracksWithDurationData = await Promise.all(
@@ -42,6 +42,8 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
 
         loadTrackDurations();
     }, [currentCategory]);
+
+    // 노래 시간 확인
     const getAudioDuration = (src: string): Promise<string> => {
         return new Promise((resolve, reject) => {
             const audio = new Audio();
@@ -61,6 +63,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
         });
     };
 
+    // 트랙이 마지막에 도달하면 반복
     useEffect(() => {
         // 각 오디오 요소에 이벤트 리스너 추가
         const audioElements = audioRefs.current;
@@ -92,6 +95,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
             });
         };
     }, [tracks, currentTrack, isRepeating]);
+
     useEffect(() => {
         if (currentTrack !== null) {
             const trackIndex = tracks.findIndex((track) => track.id === currentTrack);
@@ -109,6 +113,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
         }
     }, []);
 
+    //현재 정보 로컬스토리지에 저장
     useEffect(() => {
         if (currentTrack !== null) {
             localStorage.setItem('currentTrack', currentTrack.toString());
@@ -117,6 +122,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
         localStorage.setItem('isPlaying', isPlaying.toString());
     }, [currentTrack, currentCategory, isPlaying]);
 
+    //플레이버튼
     const togglePlay = (trackId: number) => {
         const trackIndex = tracks.findIndex((track) => track.id === trackId);
         if (trackIndex === -1) return;
@@ -144,6 +150,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
         }
     };
 
+    //볼륨 조절
     const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newVolume = parseFloat(event.target.value);
         setVolume(newVolume);
