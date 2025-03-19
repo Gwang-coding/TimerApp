@@ -5,7 +5,7 @@ import MusicList from './MusicList';
 
 interface BottomProps {
     onTime: (time: number) => void;
-    onTaskSelect: (task: string | null) => void; // onTaskSelect의 타입을 명시합니다
+    onTaskSelect: (task: string | null) => void;
 }
 
 export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
@@ -14,49 +14,50 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
     const [music, setMusic] = useState(false);
     const [time, setTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
-    const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
     const [handleTimeChange, setHandleTimeChange] = useState<number>(0);
     const listRef = useRef<HTMLDivElement | null>(null);
 
+    const [worker, setWorker] = useState<Worker | null>(null);
     // 타이머 시작/정지
     useEffect(() => {
         onTime(time); // `time` 상태가 변할 때만 `onTime` 호출
     }, [time]);
+    useEffect(() => {
+        const timerWorker = new Worker('/worker.js');
+
+        timerWorker.onmessage = (event) => {
+            setTime(event.data);
+            onTime(event.data);
+        };
+        setWorker(timerWorker);
+        return () => {
+            timerWorker.terminate();
+        };
+    }, []);
     const toggleTimer = () => {
         if (isRunning) {
             // 타이머가 실행 중이면 중지
-            if (intervalId) {
-                clearInterval(intervalId);
-                setIntervalId(null);
-            }
+            worker?.postMessage('stop');
         } else {
-            const id = setInterval(() => {
-                setTime((prev) => prev + 1); // 🔥 상태만 업데이트 (onTime 제거)
-            }, 1000);
-            setIntervalId(id);
+            worker?.postMessage('start');
         }
         setIsRunning(!isRunning);
     };
 
-    // 컴포넌트가 언마운트 될 때 타이머를 정리합니다.
-    useEffect(() => {
-        return () => {
-            if (isRunning && intervalId) {
-                clearInterval(intervalId);
-            }
-        };
-    }, [intervalId, isRunning]);
     useEffect(() => {
         onTaskSelect(selectedTask);
         if (selectedTask == null) {
             setTime(0);
             onTime(0);
+            worker?.postMessage('reset');
         } else {
             setTime(handleTimeChange);
             onTime(handleTimeChange);
+            worker?.postMessage({ command: 'set', time: handleTimeChange });
         }
 
         setIsRunning(false); // 타이머 강제 정지
+        worker?.postMessage('stop');
     }, [selectedTask]);
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
