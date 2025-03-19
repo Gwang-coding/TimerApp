@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut } from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
 import path from 'path';
 import isDev from 'electron-is-dev';
 import { fileURLToPath } from 'url';
@@ -17,9 +17,10 @@ async function createWindow() {
         width: 900,
         titleBarStyle: 'hiddenInset',
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
+            nodeIntegration: false,
+            contextIsolation: true,
             devTools: true,
+            preload: path.join(__dirname, 'preload.js'),
         },
     });
 
@@ -57,6 +58,12 @@ async function createWindow() {
 // 앱 준비되면 실행
 app.whenReady().then(() => {
     createWindow();
+
+    // IPC 핸들러 등록
+    ipcMain.handle('open-external', async (event, url) => {
+        console.log('Main process opening:', url);
+        return shell.openExternal(url);
+    });
 
     // 전역 단축키 등록
     try {

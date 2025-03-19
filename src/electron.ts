@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 import isDev from 'electron-is-dev';
 
@@ -12,10 +12,11 @@ async function createWindow() {
         titleBarStyle: 'hiddenInset',
         resizable: false,
         webPreferences: {
-            nodeIntegration: true,
+            nodeIntegration: false,
             contextIsolation: true,
             devTools: !!isDev,
             sandbox: true, // 샌드박스 모드 활성화
+            preload: path.join(__dirname, 'preload.js'),
         },
     });
 
@@ -34,7 +35,15 @@ async function createWindow() {
     mainWindow.focus();
 }
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+    createWindow();
+
+    // IPC 핸들러 등록
+    ipcMain.handle('open-external', async (event, url: string) => {
+        console.log('Main process opening:', url);
+        return shell.openExternal(url);
+    });
+});
 
 app.on('activate', () => {
     if (mainWindow === null) createWindow();
