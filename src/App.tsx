@@ -6,9 +6,7 @@ import { MusicPlayerProvider } from './components/MusicPlayer';
 import quotesData from './components/quote.json';
 import Sidebar from './components/Sidebar';
 
-interface QuotesData {
-    quotes: string[];
-}
+
 export default function App() {
     const [selectedTask, setSelectedTask] = useState<string | null>(null);
     const [time, setTime] = useState(0);
@@ -33,6 +31,7 @@ export default function App() {
         const secs = (totalSeconds % 60).toString().padStart(2, '0');
         return `${minutes}:${secs}`;
     };
+    //할일에서 클릭시 시간전달
     const handleTimeChange = (newTime: number) => {
         setTime(newTime);
     };
