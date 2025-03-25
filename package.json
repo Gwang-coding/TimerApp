@@ -1,35 +1,36 @@
 {
     "name": "timerapp",
-    "version": "0.1.1",
+    "version": "0.1.7",
     "private": true,
     "type": "module",
     "main": "dist/electron.js",
     "homepage": "./",
     "dependencies": {
         "date-fns": "^4.1.0",
+        "electron-is-dev": "^3.0.1",
         "framer-motion": "^12.4.7",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "styled-components": "^6.1.15",
-        "electron-is-dev": "^3.0.1"
+        "styled-components": "^6.1.15"
     },
     "devDependencies": {
         "@types/styled-components": "^5.1.34",
         "concurrently": "^9.1.2",
         "cross-env": "^7.0.3",
-        "electron-is-dev": "^3.0.1",
         "electron": "^34.2.0",
         "electron-builder": "^25.1.8",
+        "electron-is-dev": "^3.0.1",
+        "electron-osx-sign": "^0.6.0",
+        "react-scripts": "5.0.1",
         "typescript": "^4.9.5",
         "wait-on": "^8.0.2",
-        "react-scripts": "5.0.1",
         "web-vitals": "^2.1.4"
     },
     "scripts": {
         "react-start": "react-scripts start",
         "react-build": "react-scripts build",
         "start": "concurrently \"cross-env NODE_ENV=development BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
-        "build": "yarn react-build && mkdir -p dist && cp public/electron.js dist/ && cp -r build dist/ && electron-builder ",
+        "build": "yarn react-build && mkdir -p dist && cp public/electron.js dist/ && cp public/preload.js dist/ && cp public/splash.html build/ && cp -r build dist/ && electron-builder ",
         "build:win": "yarn react-build && mkdir -p dist && cp public/electron.js dist/ && electron-builder --win --x64",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
@@ -63,6 +64,7 @@
         "files": [
             "build/**/*",
             "dist/electron.js",
+            "dist/preload.js",
             "!node_modules/**/{CHANGELOG.md,README.md,*.d.ts,*.map}",
             "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}"
         ],
@@ -80,26 +82,12 @@
         "mac": {
             "target": [
                 {
-                    "target": "dmg",
-                    "arch": [
-                        "x64",
-                        "arm64"
-                    ]
-                },
-                {
-                    "target": "pkg",
-                    "arch": [
-                        "universal"
-                    ]
-                },
-                {
                     "target": "mas",
                     "arch": [
                         "universal"
                     ]
                 }
             ],
-            "hardenedRuntime": true,
             "icon": "electron-build/icon.icns",
             "identity": "jae gwang Kim (9VPCBG66Y7)"
         },
@@ -107,8 +95,10 @@
             "entitlements": "electron-build/entitlements.mas.plist",
             "entitlementsInherit": "electron-build/entitlements.mas.inherit.plist",
             "provisioningProfile": "electron-build/checktimeProfile.provisionprofile",
+            "entitlementsLoginHelper": "electron-build/entitlements.mas.loginhelper.plist",
             "type": "distribution",
-            "identity": "jae gwang Kim (9VPCBG66Y7)"
+            "identity": "jae gwang Kim (9VPCBG66Y7)",
+            "hardenedRuntime": false
         }
     }
 }
