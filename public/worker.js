@@ -1,6 +1,6 @@
 let time = 0;
 let intervalId = null;
-console.log('hi');
+
 self.onmessage = function (e) {
     if (e.data === 'start') {
         if (!intervalId) {
