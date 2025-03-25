@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 import isDev from 'electron-is-dev';
 import { fileURLToPath } from 'url';
@@ -9,45 +9,40 @@ const __dirname = path.dirname(__filename);
 
 let mainWindow = null;
 
-async function createWindow() {
+function createWindow() {
     mainWindow = new BrowserWindow({
         minWidth: 850,
         height: 600,
         minHeight: 600,
-        width: 900,
+        width: 850,
         titleBarStyle: 'hiddenInset',
+        backgroundColor: '#2e2c29', // 배경색 설정 (초기 로딩 중 표시)
+        show: true, // 창을 바로 표시 (비어있는 상태로)
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
             devTools: true,
-            preload: path.join(__dirname, 'preload.js'),
+            preload: isDev ? path.join(__dirname, 'preload.js') : path.join(app.getAppPath(), 'dist/preload.js'),
         },
     });
+    // splash.html도 조건부 경로 처리
+    const splashPath = isDev ? path.join(__dirname, 'build/splash.html') : path.join(app.getAppPath(), 'build/splash.html');
 
-    // 확인된 경로로 바로 설정
-    // path.join(__dirname, '../build/index.html'),
-    // path.join(__dirname, './build/index.html'),
-    // path.join(__dirname, 'build/index.html'),
-    // path.join(app.getAppPath(), 'build/index.html'),
-    // path.join(process.resourcesPath, 'build/index.html'),
-    const htmlPath = path.join(app.getAppPath(), 'build/index.html');
-    const startURL = isDev ? 'http://localhost:3000' : `file://${htmlPath}`;
+    mainWindow.loadFile(splashPath);
 
-    try {
-        // 실제 앱 로드
-        await mainWindow.loadURL(startURL);
-    } catch (err) {
-        console.error('Failed to load URL:', err);
-        // 오류 메시지를 표시하는 간단한 HTML 로드
-        await mainWindow.loadURL(`data:text/html,<html><body><h1>Error Loading App</h1><p>${err.message}</p></body></html>`);
-    }
+    setTimeout(() => {
+        const htmlPath = path.join(app.getAppPath(), 'build/index.html');
+        const startURL = isDev ? 'http://localhost:3000' : `file://${htmlPath}`;
+
+        mainWindow.loadURL(startURL);
+    }, 2000);
 
     // 개발 모드에서만 개발자 도구 열기
     if (isDev) {
         mainWindow.webContents.openDevTools({ mode: 'detach' });
     }
 
-    mainWindow.setResizable(true);
+    mainWindow.setResizable(false);
     mainWindow.on('closed', function () {
         mainWindow = null;
         app.quit();
@@ -64,17 +59,6 @@ app.whenReady().then(() => {
         console.log('Main process opening:', url);
         return shell.openExternal(url);
     });
-
-    // 전역 단축키 등록
-    try {
-        globalShortcut.register('CommandOrControl+Shift+I', () => {
-            if (mainWindow) {
-                mainWindow.webContents.openDevTools({ mode: 'detach' });
-            }
-        });
-    } catch (err) {
-        console.error('Failed to register shortcut:', err);
-    }
 });
 
 app.on('activate', function () {
