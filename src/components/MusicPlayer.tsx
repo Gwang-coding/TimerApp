@@ -7,7 +7,6 @@ const MusicPlayerContext = createContext<any>(null);
 export const useMusicPlayer = () => useContext(MusicPlayerContext);
 
 export function MusicPlayerProvider({ children }: { children: React.ReactNode }) {
-    const workerRef = useRef<Worker | null>(null);
     const audioRefs = useRef<(HTMLAudioElement | null)[]>([]);
     const [tracksWithDuration, setTracksWithDuration] = useState<Track[]>([]);
     const [volume, setVolume] = useState(0.5);
