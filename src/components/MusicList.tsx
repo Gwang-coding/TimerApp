@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { categoryTracks, Track } from './TrackData';
+import { categoryTracks } from './TrackData';
 import { useMusicPlayer } from './MusicPlayer';
 export default function MusicList({ onClose }: { onClose: () => void }) {
     const {
         currentTrack,
         currentCategory,
-        setCurrentCategory,
         isPlaying,
         togglePlay,
         toggleRepeat,
@@ -17,7 +16,6 @@ export default function MusicList({ onClose }: { onClose: () => void }) {
         playPrevious,
         volume,
         handleVolumeChange,
-        audioRefs,
         handleCategoryChange,
         tracksWithDuration,
     } = useMusicPlayer();
