@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>타이머 준비 중...</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #292929;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+      user-select: none;
+    }
+    
+    .splash-container {
+      text-align: center;
+      display:flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .logo {
+      width: 150px;
+      height: 150px;
+      margin-bottom: 20px;
+    }
+    
+    .app-name {
+      font-size: 24px;
+      font-weight: bold;
+      
+    }
+    
+    #container {
+      width: 180px; /* stick_length(30px) * 6 */
+      padding-top: 50px;
+      margin-left: 10px;
+      vertical-align: middle;
+      text-align: center;
+      
+    }
+    
+    .stick {
+      width:30px; /* stick_length */
+      height: 3px;
+      background: white; /* stick_color */
+      display: inline-block;
+      margin-left: -8px; /* stick_distance */
+    }
+    
+    .stick:nth-child(odd) {  
+      transform: rotate(30deg);
+      -ms-transform: rotate(30deg);
+      -webkit-transform: rotate(30deg);
+      -moz-transform: rotate(30deg);
+      animation: fall 2s infinite;
+      -webkit-animation: fall 2s infinite;
+      -moz-animation: fall 2s infinite;
+    }
+    
+    .stick:nth-child(even) {  
+      transform: rotate(-30deg);
+      -ms-transform: rotate(-30deg);
+      -webkit-transform: rotate(-30deg);
+      -moz-transform: rotate(-30deg);
+      animation: rise 2s infinite;
+      -webkit-animation: rise 2s infinite;
+      -moz-animation: rise 2s infinite;
+    }
+    
+    @keyframes rise {
+      50% { 
+        transform: rotate(30deg);
+        -ms-transform: rotate(30deg);
+        -webkit-transform: rotate(30deg);
+        -moz-transform: rotate(30deg);
+      }
+    }
+    
+    @-webkit-keyframes rise {
+      50% { 
+        transform: rotate(30deg);
+        -webkit-transform: rotate(30deg);
+      }
+    }
+    
+    @-moz-keyframes rise {
+      50% { 
+        transform: rotate(30deg);
+        -moz-transform: rotate(30deg);
+      }
+    }
+    
+    @keyframes fall {
+      50% { 
+        transform: rotate(-30deg);
+        -ms-transform: rotate(-30deg);
+        -webkit-transform: rotate(-30deg);
+        -moz-transform: rotate(-30deg);
+      }
+    }
+    
+    @-webkit-keyframes fall {
+      50% { 
+        transform: rotate(-30deg);
+        -webkit-transform: rotate(-30deg);
+      }
+    }
+    
+    @-moz-keyframes fall {
+      50% { 
+        transform: rotate(-30deg);
+        -moz-transform: rotate(-30deg);
+      }
+    }
+    
+    h1 {
+      margin-top: 30px;
+      font-size: 24px;
+      animation: fade 2s infinite;
+      -webkit-animation: fade 2s infinite;
+      -moz-animation: fade 2s infinite;
+    }
+    
+    @keyframes fade {
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    
+    @-webkit-keyframes fade {
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    
+    @-moz-keyframes fade {
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="splash-container">
+    <img class="logo" src="./assets/icons/icon.svg">
+    <div class="app-name">오늘 하루도 화이팅하세요!</div>
+    <div id="container">
+      <div class="stick"></div>
+      <div class="stick"></div>
+      <div class="stick"></div>
+      <div class="stick"></div>
+      <div class="stick"></div>
+      <div class="stick"></div>
+      
+      <h1>Loading...</h1>
+    </div>
+  </div>
+</body>
+</html>
