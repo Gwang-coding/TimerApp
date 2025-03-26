@@ -23,8 +23,8 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
         onTime(time); // `time` 상태가 변할 때만 `onTime` 호출
     }, [time]);
     useEffect(() => {
-        const timerWorker = new Worker('/worker.js');
-
+        const workerPath = `${window.location.origin}/worker.js`;
+        const timerWorker = new Worker(workerPath, { type: 'module' });
         timerWorker.onmessage = (event) => {
             setTime(event.data);
             onTime(event.data);
