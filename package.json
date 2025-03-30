@@ -1,6 +1,6 @@
 {
-    "name": "timerapp",
-    "version": "0.1.7",
+    "name": "hapin",
+    "version": "0.2.5",
     "private": true,
     "type": "module",
     "main": "dist/electron.js",
@@ -30,7 +30,7 @@
         "react-start": "react-scripts start",
         "react-build": "react-scripts build",
         "start": "concurrently \"cross-env NODE_ENV=development BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
-        "build": "yarn react-build && mkdir -p dist && cp public/electron.js dist/ && cp public/preload.js dist/ && cp public/splash.html build/ && cp -r build dist/ && electron-builder ",
+        "build": "yarn react-build && mkdir -p dist && cp public/electron.js dist/ && cp public/preload.js dist/  &&  cp public/splash.html build/ && cp -r build dist/ && electron-builder ",
         "build:win": "yarn react-build && mkdir -p dist && cp public/electron.js dist/ && electron-builder --win --x64",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
@@ -56,7 +56,7 @@
     },
     "build": {
         "appId": "com.jaegwang.checktime",
-        "productName": "CheckTime",
+        "productName": "Hapin",
         "directories": {
             "output": "dist",
             "buildResources": "assets"
