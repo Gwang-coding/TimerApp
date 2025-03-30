@@ -3,6 +3,21 @@ import styled from 'styled-components';
 import TodoList from './TodoList';
 import MusicList from './MusicList';
 
+// 타이머 API 타입 정의 (에러 방지를 위해 수정)
+declare global {
+    interface Window {
+        timerAPI: {
+            startTimer: () => void;
+            stopTimer: () => void;
+            resetTimer: () => void;
+            setTime: (time: number) => void;
+            requestTimerState?: () => void; // 선택적 속성으로 변경
+            onTimeUpdate: (callback: (time: number) => void) => () => void;
+            onRunningStateChange?: (callback: (isRunning: boolean) => void) => () => void; // 선택적 속성으로 변경
+        };
+    }
+}
+
 interface BottomProps {
     onTime: (time: number) => void;
     onTaskSelect: (task: string | null) => void;
@@ -17,48 +32,85 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
     const [handleTimeChange, setHandleTimeChange] = useState<number>(0);
     const listRef = useRef<HTMLDivElement | null>(null);
 
-    const [worker, setWorker] = useState<Worker | null>(null);
-    // 타이머 시작/정지
     useEffect(() => {
         onTime(time); // `time` 상태가 변할 때만 `onTime` 호출
     }, [time]);
+    // 컴포넌트 마운트 시 상태 요청 (안전하게 처리)
     useEffect(() => {
-        const workerPath = `${window.location.origin}/worker.js`;
-        const timerWorker = new Worker(workerPath, { type: 'module' });
-        timerWorker.onmessage = (event) => {
-            setTime(event.data);
-            onTime(event.data);
-        };
-        setWorker(timerWorker);
+        console.log('Component mounted, checking for requestTimerState');
+
+        // 함수가 존재하는지 확인하고 실행
+        if (window.timerAPI.requestTimerState) {
+            console.log('Requesting timer state');
+            window.timerAPI.requestTimerState();
+        } else {
+            console.log('requestTimerState function not available');
+        }
+    }, []);
+
+    // 타이머 시간 업데이트 리스너
+    useEffect(() => {
+        console.log('Setting up timer update listener');
+
+        // 기본 타이머 업데이트 리스너 등록 (필수)
+        const removeTimeListener = window.timerAPI.onTimeUpdate((newTime: number) => {
+            console.log('Timer update received:', newTime);
+            setTime(newTime);
+            onTime(newTime);
+        });
+
+        let removeRunningListener = () => {};
+
+        // 실행 상태 리스너가 존재하면 등록 (선택)
+        if (window.timerAPI.onRunningStateChange) {
+            removeRunningListener = window.timerAPI.onRunningStateChange((running: boolean) => {
+                console.log('Timer running state update:', running);
+                setIsRunning(running);
+            });
+        }
+
+        // 컴포넌트 언마운트 시 리스너 제거
         return () => {
-            timerWorker.terminate();
+            console.log('Removing timer listeners');
+            removeTimeListener();
+            removeRunningListener();
         };
     }, []);
+
+    // 타이머 시작/정지 토글 함수
     const toggleTimer = () => {
+        console.log('Toggle timer, current state:', isRunning);
+
         if (isRunning) {
-            // 타이머가 실행 중이면 중지
-            worker?.postMessage('stop');
+            window.timerAPI.stopTimer();
+            setIsRunning(false); // 수동으로 상태 업데이트 (onRunningStateChange가 없을 경우)
         } else {
-            worker?.postMessage('start');
+            window.timerAPI.startTimer();
+            setIsRunning(true); // 수동으로 상태 업데이트 (onRunningStateChange가 없을 경우)
         }
-        setIsRunning(!isRunning);
     };
 
+    // 선택된 작업이 변경될 때 타이머 업데이트
     useEffect(() => {
+        console.log('Task selected:', selectedTask, 'Time:', handleTimeChange);
         onTaskSelect(selectedTask);
+
         if (selectedTask == null) {
             setTime(0);
             onTime(0);
-            worker?.postMessage('reset');
+            window.timerAPI.resetTimer();
         } else {
             setTime(handleTimeChange);
             onTime(handleTimeChange);
-            worker?.postMessage({ command: 'set', time: handleTimeChange });
+            window.timerAPI.setTime(handleTimeChange);
         }
 
-        setIsRunning(false); // 타이머 강제 정지
-        worker?.postMessage('stop');
+        // 타이머 강제 정지
+        window.timerAPI.stopTimer();
+        setIsRunning(false); // 수동으로 상태 업데이트
     }, [selectedTask]);
+
+    // 모달 외부 클릭 처리
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (listRef.current && !listRef.current.contains(event.target as Node)) {
@@ -77,6 +129,23 @@ export default function Bottom({ onTaskSelect, onTime }: BottomProps) {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [list, music]);
+
+    // 앱이 포커스를 받을 때 상태 다시 요청 (안전하게 처리)
+    useEffect(() => {
+        const handleFocus = () => {
+            console.log('Window focused, checking for requestTimerState');
+            if (window.timerAPI.requestTimerState) {
+                window.timerAPI.requestTimerState();
+            }
+        };
+
+        window.addEventListener('focus', handleFocus);
+
+        return () => {
+            window.removeEventListener('focus', handleFocus);
+        };
+    }, []);
+
     return (
         <Div className="bottom">
             <CircleButton onClick={() => setMusic(!music)}>
