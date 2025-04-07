@@ -18,11 +18,17 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
     const [showInput, setShowInput] = useState(false); // 입력창 표시 여부
     const inputRef = useRef<HTMLInputElement>(null);
     const formatTime = (totalSeconds: number) => {
-        const minutes = Math.floor(totalSeconds / 60)
+        const hours = Math.floor(totalSeconds / 3600).toString();
+        const minutes = Math.floor((totalSeconds % 3600) / 60)
             .toString()
             .padStart(2, '0');
         const secs = (totalSeconds % 60).toString().padStart(2, '0');
-        return `${minutes}:${secs}`;
+
+        if (totalSeconds >= 3600) {
+            return `${hours}:${minutes}:${secs}`;
+        } else {
+            return `${minutes}:${secs}`;
+        }
     };
     const handleDeleteTask = (index: number, e: React.MouseEvent) => {
         e.stopPropagation(); // 이벤트 전파 중지
@@ -33,7 +39,18 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
             onTaskSelect(null);
         }
     };
+    const handleDeleteCompletedTask = (completedIndex: number, e: React.MouseEvent) => {
+        e.stopPropagation(); // 이벤트 전파 중지
 
+        // 실제 tasks 배열에서의 인덱스 찾기
+        const actualIndex = tasks.findIndex((task, idx) => {
+            return task.checked && tasks.filter((t) => t.checked).indexOf(task) === completedIndex;
+        });
+
+        if (actualIndex !== -1) {
+            setTasks(tasks.filter((_, i) => i !== actualIndex));
+        }
+    };
     const handleTaskSelect = (index: number) => {
         const updatedTasks = [...tasks];
         const prevSelected = updatedTasks.findIndex((task) => task.selected);
@@ -65,9 +82,12 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
             setShowInput(false); // 입력 후 입력창 닫기
         }
     };
+
     useEffect(() => {
+        if (seconds === 0) return;
         setTasks((prevTasks) => prevTasks.map((task) => (task.selected ? { ...task, timer: seconds } : task)));
     }, [seconds]);
+
     useEffect(() => {
         inputRef.current?.focus();
     }, [addTask]);
@@ -179,11 +199,7 @@ export default function TodoList({ onClose, onTaskSelect, seconds, sendTime }: L
                                 {task.text}
                             </TaskText>
                             <Div className="timer">{formatTime(task.timer)}</Div>
-                            <Img
-                                className="list"
-                                onClick={() => setTasks(tasks.filter((_, i) => i !== index))}
-                                src="./assets/icons/cancel.svg"
-                            />
+                            <Img className="list" onClick={(e) => handleDeleteCompletedTask(index, e)} src="./assets/icons/cancel.svg" />
                         </Task>
                     ))}
                 {!showInput && (
