@@ -6,7 +6,6 @@ import { MusicPlayerProvider } from './components/MusicPlayer';
 import quotesData from './components/quote.json';
 import Sidebar from './components/Sidebar';
 
-
 export default function App() {
     const [selectedTask, setSelectedTask] = useState<string | null>(null);
     const [time, setTime] = useState(0);
@@ -23,13 +22,19 @@ export default function App() {
 
         return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 해제
     }, []);
-    // 시간을 mm:ss 형식으로 변환하는 함수
+    // 시간을 hh:mm:ss 형식으로 변환하는 함수
     const formatTime = (totalSeconds: number) => {
-        const minutes = Math.floor(totalSeconds / 60)
+        const hours = Math.floor(totalSeconds / 3600).toString();
+        const minutes = Math.floor((totalSeconds % 3600) / 60)
             .toString()
             .padStart(2, '0');
         const secs = (totalSeconds % 60).toString().padStart(2, '0');
-        return `${minutes}:${secs}`;
+
+        if (totalSeconds >= 3600) {
+            return `${hours}:${minutes}:${secs}`;
+        } else {
+            return `${minutes}:${secs}`;
+        }
     };
     //할일에서 클릭시 시간전달
     const handleTimeChange = (newTime: number) => {
@@ -195,10 +200,10 @@ const Header = styled.p`
 `;
 
 const Timer = styled.p`
-    font-size: 120px;
+    font-size: 115px;
     font-weight: bold;
-    width: 200px;
-    margin: 0 145px 0 0;
+    font-variant-numeric: tabular-nums;
+    margin: 0;
 `;
 
 const Quote = styled.p`
