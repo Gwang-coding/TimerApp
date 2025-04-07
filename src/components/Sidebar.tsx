@@ -14,7 +14,7 @@ export default function Sidebar({ setBackgroundImage }: { setBackgroundImage: (i
     };
     const openAppStoreReview = () => {
         console.log('Review button clicked');
-        const appStoreId = '497799835';
+        const appStoreId = '6743235178';
         const reviewUrl = `macappstore://apps.apple.com/app/id${appStoreId}?action=write-review`;
 
         console.log('window.Electron:', window.Electron);
@@ -96,7 +96,7 @@ export default function Sidebar({ setBackgroundImage }: { setBackgroundImage: (i
                             <Div className="content-container">
                                 <InfoItem>
                                     <InfoLabel>버전</InfoLabel>
-                                    <InfoValue>0.1.0</InfoValue>
+                                    <InfoValue>0.1.2</InfoValue>
                                 </InfoItem>
                                 <InfoItem>
                                     <InfoLabel>개발자</InfoLabel>
